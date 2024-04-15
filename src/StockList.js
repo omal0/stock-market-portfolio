@@ -1,7 +1,7 @@
+import StockListHeader from './StockListHeader.js';
+import StockListItem from './StockListItem.js';
+import StockListTotals from './StockListTotals.js';
 import { Table } from 'reactstrap';
-import StockListHeader from './StockListHeader';
-import StockListItem from './StockListItem';
-import StockListTotals from './StockListTotals';
 
 function StockList(props) {
   
