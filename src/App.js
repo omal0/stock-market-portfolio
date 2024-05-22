@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 import { Card, CardHeader, CardBody, CardFooter, Button } from 'reactstrap';
-import sampleData from './sampleData';
 import StockList from './StockList';
 
 function App() {
@@ -9,13 +8,44 @@ function App() {
   // Uncomment setMyName if required, for example, if the name
   // is stored in the DynamoDB
   const [myName/*, setMyName*/] = useState('Roger');
-  
+  const AWS_API_GATEWAY = "https://vyunf7xrc5.execute-api.us-east-1.amazonaws.com/prod/get-portfolio";
   const [stocks, setStocks] = useState([]);
   const [stockList, setStockList] = useState([]);
   
   // Retrieve the current stock information when the page first loads
   useEffect(() => {
-    setStocks(sampleData);
+    // setStocks(sampleData);
+        const options = {
+      method: 'POST',
+      cache: 'default'
+    };
+    
+    fetch(AWS_API_GATEWAY, options)
+      .then(function(response) {
+        if (!response.ok) {
+          console.log(response);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(function(response) {
+        
+        response.Items.map((item) => {
+          item.ticker = item.ticker["S"];
+          item.shares = item.shares["N"];
+          item.purchasePrice = item.purchasePrice["N"];
+          item.name = item.name["S"];
+          
+          return item;
+        })
+        
+        console.log(response);
+        setStocks(response.Items);
+        
+      })
+      .catch(function(error) {
+        console.log(error);
+      })
   }, []);
   
   // With the stock data add purchase value, current price
